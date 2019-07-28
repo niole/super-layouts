@@ -24,3 +24,6 @@
 - [ ] 7. automated card with drilldown layout, where selecting a card drills down into a details view
 * details view is managed by routing library
 * details view can also be specified as an inline 'preview' panel
+
+
+- [x] 8. data fetcher container
