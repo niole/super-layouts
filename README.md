@@ -19,7 +19,7 @@
 - [ ] 5. create/edit modal
 * created from mixture of validated form, toggle container, whatever trigger buttons and modal component you desire
 
-- [ ] 6. toggle container
+- [x] 6. toggle container
 
 - [ ] 7. automated card with drilldown layout, where selecting a card drills down into a details view
 * details view is managed by routing library
