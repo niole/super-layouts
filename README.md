@@ -16,7 +16,7 @@
 * supports the create/edit modal
 * must have the ability for actions in certain inputs to affect other inputs
 
-- [ ] 5. create/edit modal
+- [x] 5. create/edit modal
 * created from mixture of validated form, toggle container, whatever trigger buttons and modal component you desire
 
 - [x] 6. toggle container
