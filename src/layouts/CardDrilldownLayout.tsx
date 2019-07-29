@@ -47,6 +47,10 @@ class CardDrilldownLayout<Entity> extends React.PureComponent<Props<Entity>, Sta
             drilldownRoutingNavigator(entity);
         } else if (PreviewPanel) {
             // render preview panel
+            this.setState({
+                showPreviewPanel: true,
+                selectedEntity: entity,
+            });
         } else {
             console.error(`
                 Doing nothing on drilldown because neither ${PreviewPanel} nor
