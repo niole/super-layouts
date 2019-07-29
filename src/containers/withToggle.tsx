@@ -1,16 +1,9 @@
 import * as React from 'react';
-import { GeneralComponent } from 'types';
-
-interface ButtonProps extends OuterButtonProps {
-    onClick: (event: any) => void;
-    children: string | JSX.Element | JSX.Element[];
-};
+import { ButtonProps, ButtonComponent as Button, GeneralComponent } from 'types';
 
 interface OuterButtonProps {
     disabled?: boolean;
 }
-
-type Button<Props> = GeneralComponent<Props>;
 
 type ButtonState = {
     visible?: boolean;
@@ -24,7 +17,7 @@ export type InnerProps = {
 
 export default function withToggle<OuterProps extends {}>(
     ToggleableComponent: GeneralComponent<OuterProps & InnerProps>
-): (ButtonComponent: Button<ButtonProps>, defaultState?: ButtonState) => GeneralComponent<OuterProps & OuterButtonProps> {
+): (ButtonComponent: Button, defaultState?: ButtonState) => GeneralComponent<OuterProps & OuterButtonProps> {
     return (ButtonComponent, defaultState) => ({ disabled, ...props }) => {
         const state = defaultState || {};
         const defaultButtonState = { visible: state.visible || false, children: state.children || 'Open' };
