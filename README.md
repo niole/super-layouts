@@ -12,7 +12,7 @@
 - [ ] 3. easy access params and navigate utilities
 * this is a component level concern, perhaps could be made available via a container or via a route wrapper
 
-- [ ] 4. automated layout validated form
+- [x] 4. automated layout validated form
 * supports the create/edit modal
 * must have the ability for actions in certain inputs to affect other inputs
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {
+    GeneralComponent,
     DialogActionsComponent,
     ActionBarComponent,
     ButtonComponent,
@@ -11,25 +12,26 @@ const Error = ({ message, Text }: { Text: TextComponent; message?: string }) => 
     message ? <Text>{message}</Text> : null
 );
 
-export type PluggableProps<C, V> = {
-    onChange: (event: C) => void;
-    value: V;
+export type PluggableProps<ChangedData, InputValue, AllValues> = {
+    values: AllValues;
+    onChange: (data: ChangedData) => void;
+    value: InputValue;
     error?: string;
 };
 
 export type Validator<V> = ((value: V) => string | undefined) | undefined;
 
-export type PluggableInput<C, V> = (props: PluggableProps<C, V>) => JSX.Element;
+export type PluggableInput<C, V, AllValues> = GeneralComponent<PluggableProps<C, V, AllValues>>;
 
-export type ValidatedInput<A, C, V> = {
+export type ValidatedInput<A, C, V, Values> = {
     key: string;
     validator?: Validator<A>;
-    Input: PluggableInput<C, V>;
+    Input: PluggableInput<C, V, Values>;
 };
 
 type Props<V> = {
     ActionsContainer: DialogActionsComponent;
-    inputs: ValidatedInput<any, any, any>[][];
+    inputs: ValidatedInput<any, any, any, V>[][];
     onSubmit: (values: V) => Promise<void>;
     onCancel: () => void;
     SubmitButton: ButtonComponent;
@@ -79,9 +81,10 @@ class ValidatedForm<V extends { [key: string]: any }> extends React.PureComponen
         const { values } = this.state;
         const { inputs } = this.props;
         const flattenedInputs = inputs.reduce(
-            (acc: ValidatedInput<any, any, any>[], row: ValidatedInput<any, any, any>[]) => [...acc, ...row]
+            (acc: ValidatedInput<any, any, any, V>[], row: ValidatedInput<any, any, any, V>[]) => [...acc, ...row]
         , []);
-        const newErrors = flattenedInputs.reduce((errors: Errors, { key, validator }: ValidatedInput<any, any, any>) => ({
+        const newErrors =
+            flattenedInputs.reduce((errors: Errors, { key, validator }: ValidatedInput<any, any, any, V>) => ({
             ...errors,
             [key]: validator ? validator(values[key]) : undefined,
         }), {});
@@ -136,11 +139,12 @@ class ValidatedForm<V extends { [key: string]: any }> extends React.PureComponen
         const { submitError, disableSubmit, errors, values } = this.state;
         return (
             <View>
-                {inputs.map((inputRow: ValidatedInput<any, any, any>[]) => (
+                {inputs.map((inputRow: ValidatedInput<any, any, any, V>[]) => (
                     <View key={inputRow[0].key}>
-                        {inputRow.map(({ key, Input, validator }: ValidatedInput<any, any, any>) => (
+                        {inputRow.map(({ key, Input, validator }: ValidatedInput<any, any, any, V>) => (
                             <View key={key}>
                                 <Input
+                                    values={values}
                                     onChange={this.handleInputChange(key, validator)}
                                     value={values[key]}
                                     error={errors[key]}
