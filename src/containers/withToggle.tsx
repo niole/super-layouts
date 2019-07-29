@@ -23,7 +23,7 @@ export default function withToggle<OuterProps extends {}>(
         const defaultButtonState = { visible: state.visible || false, children: state.children || 'Open' };
         const [visible, setVisible] = React.useState(defaultButtonState.visible);
         return (
-            <span>
+            <>
                 <ToggleableComponent
                     {...props as OuterProps}
                     visible={visible}
@@ -32,7 +32,7 @@ export default function withToggle<OuterProps extends {}>(
                 <ButtonComponent onClick={() => setVisible(!visible)} disabled={disabled}>
                     {defaultButtonState.children}
                 </ButtonComponent>
-            </span>
+            </>
         );
     };
 }

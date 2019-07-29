@@ -53,3 +53,10 @@ export interface DialogActionsComponentProps {
 }
 
 export type DialogActionsComponent = GeneralComponent<DialogActionsComponentProps>;
+
+export interface CardProps<Navigator, Entity> {
+    entity: Entity;
+    onDrilldown: Navigator;
+}
+
+export type CardComponent<Navigator, Entity> = GeneralComponent<CardProps<Navigator, Entity>>;
