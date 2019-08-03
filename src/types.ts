@@ -1,6 +1,8 @@
 import * as React from 'react';
 
-export type GeneralComponent<Props> = React.ComponentClass<Props> | React.StatelessComponent<Props>;
+export type GeneralComponent<Props> = React.ComponentClass<Props> |
+    React.StatelessComponent<Props> |
+    React.FC<Props>;
 
 export interface ButtonProps {
     onClick: (event: any) => void;
