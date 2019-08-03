@@ -37,7 +37,7 @@ describe('<RouteAwareLayout />', () => {
         currentEndpoint: 'x',
     };
 
-    it('should render', () => {
+    it('should render the tab container', () => {
         const wrapper = mount(
             <RouteAwareLayout {...defaultProps} />
         );
