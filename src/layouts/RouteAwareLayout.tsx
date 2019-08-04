@@ -95,7 +95,7 @@ class RouteAwareLayout<RouteParams, RouterMetadata extends {}> extends React.Pur
             const currentLocation = getEndpoint(this.props);
             const layout = layouts.find((layout: LayoutProps<{}>) => layout.layoutKey === focusedKey);
 
-            const routeParams = getRouteParams(layout ? layout.matcher : '', currentLocation);
+            const routeParams = {...this.props, ...getRouteParams(layout ? layout.matcher : '', currentLocation)};
             layoutNavigator(routeParams);
             this.setState({ focusedKey: layoutKey });
         } else {
