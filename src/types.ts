@@ -19,7 +19,7 @@ export interface TextProps {
 export type TextComponent = GeneralComponent<TextProps>;
 
 export interface ContainerProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 export type ContainerComponent = GeneralComponent<ContainerProps>;
