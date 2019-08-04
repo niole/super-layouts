@@ -41,7 +41,7 @@ describe('<RouteAwareLayout />', () => {
     const defaultProps = {
         layouts: [] as LayoutProps<{}>[],
         TabContainer: TabsComponent,
-        navigator: (url: string) => console.log(url),
+        navigator: (url: string): void => undefined,
         getEndpoint: (props: Props<{}, { currentEndpoint: string }>) => props.currentEndpoint,
         currentEndpoint: '/layout1/T/N',
         defaultActiveKey: 'layout1',
@@ -213,6 +213,6 @@ describe('<RouteAwareLayout />', () => {
             const newSelectedTab = wrapper.find('button[aria-selected=true]');
             expect(newSelectedTab.text()).toEqual('One');
             done();
-        }, 100);
+        }, 10);
     });
 });
