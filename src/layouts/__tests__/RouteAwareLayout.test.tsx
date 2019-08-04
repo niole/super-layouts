@@ -228,7 +228,7 @@ describe('<RouteAwareLayout />', () => {
                 layouts={[
                     {
                         layoutKey: 'layout1',
-                        matcher: '/layout1/:tag/cat:number',
+                        matcher: '/layout1/:tag/cat/:number',
                         View: View1,
                         title: <>One</>,
                     },
@@ -253,5 +253,70 @@ describe('<RouteAwareLayout />', () => {
             expect(newSelectedTab.text()).toEqual('One');
             done();
         }, 10);
+    });
+
+    it('should trigger the navigation callback when clicking Submit button in tab 2', () => {
+        const spy = jest.fn();
+        const wrapper = mount(
+            <RouteAwareLayout
+                {...defaultProps}
+                navigator={spy}
+                currentEndpoint="/layout2/T/N"
+                defaultActiveKey="layout2"
+                layouts={[
+                    {
+                        layoutKey: 'layout1',
+                        matcher: '/layout1/:tag/cat/:number',
+                        View: View1,
+                        title: <>One</>,
+                    },
+                    {
+                        layoutKey: 'layout2',
+                        matcher: '/layout2/:tag/:number',
+                        View: View2,
+                        title: 'Two',
+                    },
+                ] as LayoutProps<ViewOneProps & ViewTwoProps>[]}
+            />
+        );
+
+        const submitButton = wrapper.findWhere((node: any) =>
+            node.exists() && node.is('button') && node.text() === 'Submit'
+        );
+        submitButton.simulate('click');
+        expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should trigger the navigation callback with the right endtpoin when clicking Submit button in tab 2', () => {
+        const spy = jest.fn();
+        const wrapper = mount(
+            <RouteAwareLayout
+                {...defaultProps}
+                navigator={spy}
+                currentEndpoint="/layout2/T/100"
+                defaultActiveKey="layout2"
+                layouts={[
+                    {
+                        layoutKey: 'layout1',
+                        matcher: '/layout1/:tag/cat/:number',
+                        View: View1,
+                        title: <>One</>,
+                    },
+                    {
+                        layoutKey: 'layout2',
+                        matcher: '/layout2/:tag/:number',
+                        View: View2,
+                        title: 'Two',
+                    },
+                ] as LayoutProps<ViewOneProps & ViewTwoProps>[]}
+            />
+        );
+
+        const submitButton = wrapper.findWhere((node: any) =>
+            node.exists() && node.is('button') && node.text() === 'Submit'
+        );
+        submitButton.simulate('click');
+
+        expect(spy.mock.calls[0][0]).toEqual('/layout1/T/cat/100');
     });
 });
