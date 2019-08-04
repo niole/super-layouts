@@ -9,7 +9,7 @@ import {
     DialogTitleComponent,
     DialogComponent,
 } from 'types';
-import ValidatedForm, { ValidatedInput } from 'components/ValidatedForm';
+import ValidatedForm, { ValidatedInput } from './ValidatedForm';
 
 type Props<Values> = {
     DialogActions: DialogActionsComponent;
@@ -26,7 +26,7 @@ type Props<Values> = {
     onConfirm: (values: Values) => void;
     onClose: () => void;
     defaultValues: Values;
-    inputs: ValidatedInput<any, any, any>[][];
+    inputs: ValidatedInput<any, any, any, Values>[][];
     SubmitButton: ButtonComponent;
     CancelButton: ButtonComponent;
 };

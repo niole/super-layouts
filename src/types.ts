@@ -6,7 +6,7 @@ export type GeneralComponent<Props> = React.ComponentClass<Props> |
 
 export interface ButtonProps {
     onClick: (event: any) => void;
-    children: React.ReactNode;
+    children?: React.ReactNode;
     disabled?: boolean;
 };
 
@@ -33,19 +33,19 @@ export type ActionBarComponent = GeneralComponent<ActionBarProps>
 export interface DialogComponentProps {
     open: boolean;
     onClose: () => void;
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 export type DialogComponent = GeneralComponent<DialogComponentProps>;
 
 export interface DialogTitleComponentProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 export type DialogTitleComponent = GeneralComponent<DialogTitleComponentProps>;
 
 export interface DialogContentComponentProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 export type DialogContentComponent = GeneralComponent<DialogContentComponentProps>;
