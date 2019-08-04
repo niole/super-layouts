@@ -124,7 +124,7 @@ describe('<RouteAwareLayout />', () => {
         }, 50);
     });
 
-    it('should trigger the navigation handler when clicking on layout1\'s tab', done => {
+    it('should trigger the navigation handler when clicking on layout1\'s tab', () => {
         const spy = jest.fn();
         const wrapper = mount(
             <RouteAwareLayout
@@ -150,9 +150,6 @@ describe('<RouteAwareLayout />', () => {
         const selectedTab = wrapper.find('button[aria-selected=false]');
         selectedTab.simulate('click');
 
-        setTimeout(() => {
-            expect(spy).toHaveBeenCalledTimes(1);
-            done();
-        }, 50);
+        expect(spy).toHaveBeenCalledTimes(1);
     });
 });
