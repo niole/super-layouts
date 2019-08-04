@@ -181,4 +181,38 @@ describe('<RouteAwareLayout />', () => {
         selectedTab.simulate('click');
         expect(spy.mock.calls[0][0]).toEqual('/layout1/T/N');
     });
+
+    it('should change the focus to tab 1 on click', done => {
+        const wrapper = mount(
+            <RouteAwareLayout
+                {...defaultProps}
+                currentEndpoint="/layout2/T/N"
+                defaultActiveKey="layout2"
+                layouts={[
+                    {
+                        layoutKey: 'layout1',
+                        matcher: '/layout1/:tag/:number',
+                        View: View1,
+                        title: <>One</>,
+                    },
+                    {
+                        layoutKey: 'layout2',
+                        matcher: '/layout2/:tag/:number',
+                        View: View2,
+                        title: 'Two',
+                    },
+                ] as LayoutProps<ViewOneProps & ViewTwoProps>[]}
+            />
+        );
+
+        const selectedTab = wrapper.find('button[aria-selected=false]');
+        selectedTab.simulate('click');
+
+        setTimeout(() => {
+            wrapper.update();
+            const newSelectedTab = wrapper.find('button[aria-selected=true]');
+            expect(newSelectedTab.text()).toEqual('One');
+            done();
+        }, 100);
+    });
 });

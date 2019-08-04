@@ -94,6 +94,7 @@ class RouteAwareLayout<RouteParams, RouterMetadata extends {}> extends React.Pur
 
             const routeParams = getRouteParams(layout ? layout.matcher : '', currentLocation);
             layoutNavigator(routeParams);
+            this.setState({ focusedKey: layoutKey });
         } else {
             console.warn(`Could not find handler for layout with key ${layoutKey}`);
         }
@@ -116,7 +117,7 @@ class RouteAwareLayout<RouteParams, RouterMetadata extends {}> extends React.Pur
 
         return (
             <Container
-                activeKey={defaultActiveKey}
+                activeKey={focusedKey}
                 onChange={this.handleOnChange(layoutNavigators)}
                 layouts={layouts}
                 {...getRouteParams(layout ? layout.matcher : '', currentLocation)}
