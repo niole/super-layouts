@@ -191,7 +191,7 @@ describe('<RouteAwareLayout />', () => {
                 layouts={[
                     {
                         layoutKey: 'layout1',
-                        matcher: '/layout1/:tag/:number',
+                        matcher: '/layout1/:tag/cat:number',
                         View: View1,
                         title: <>One</>,
                     },
