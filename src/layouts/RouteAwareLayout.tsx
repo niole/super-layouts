@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { GeneralComponent } from '../types';
 
-const GET_PARAMS_MATCHER = /(?<=:)([a-zA-Z][\w-]*)/;
+const GET_PARAMS_MATCHER = /:([a-zA-Z][\w-]*)/;
 
 export interface IndexedParam {
     index: number;
@@ -100,14 +100,21 @@ class RouteAwareLayout<RouteParams, RouterMetadata extends {}> extends React.Pur
             ...handlers,
             [layoutKey]: (currentRouteParams: { [key: string]: any }) => {
                 const indexedParamNames = findParamsNames(matcher);
+                const filteredParams = {};
                 const splitMatcher = splitEndpoint(matcher);
 
                 indexedParamNames.forEach((params: IndexedParam) => {
+                    // @ts-ignore
+                    filteredParams[params.key] = currentRouteParams[params.key];
                     splitMatcher[params.index] = currentRouteParams[params.key];
                 });
 
                 const nextLocation = `/${splitMatcher.join('/')}`;
-                navigator(nextLocation, splitEndpoint(matcher), indexedParamNames);
+                navigator(
+                    nextLocation,
+                    splitEndpoint(matcher),
+                    filteredParams,
+                );
                 this.setState({ focusedKey: layoutKey });
             },
         }), {});
@@ -121,6 +128,7 @@ class RouteAwareLayout<RouteParams, RouterMetadata extends {}> extends React.Pur
             layouts,
             getEndpoint,
             navigator,
+            ...rest
         } = this.props;
         const { focusedKey } = this.state;
         const currentLocation = getEndpoint(this.props);
@@ -130,10 +138,11 @@ class RouteAwareLayout<RouteParams, RouterMetadata extends {}> extends React.Pur
 
         return (
             <Container
+                {...getRouteParams(layout ? layout.matcher : '', currentLocation)}
+                {...rest}
                 activeKey={focusedKey}
                 onChange={this.handleOnChange(layoutNavigators)}
                 layouts={layouts}
-                {...getRouteParams(layout ? layout.matcher : '', currentLocation)}
                 navigators={layoutNavigators}
             />
         );
