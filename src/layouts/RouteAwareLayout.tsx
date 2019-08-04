@@ -37,10 +37,13 @@ function getLayoutNavigators(layoutProps: LayoutProps<{ [key: string]: any }>[],
         ...handlers,
         [layoutKey]: (currentRouteParams: { [key: string]: any }) => {
             const indexedParamNames = findParamsNames(matcher);
-            const nextLocation = '/' + splitEndpoint(matcher).map((subUrl: string, index: number) => {
-                const found = indexedParamNames.find((indexed: IndexedParam) => indexed.index === index);
-                return found ? currentRouteParams[found.key] : subUrl;
-            }).join('/');
+            const splitMatcher = splitEndpoint(matcher);
+
+            indexedParamNames.forEach((params: IndexedParam) => {
+                splitMatcher[params.index] = currentRouteParams[params.key];
+            });
+
+            const nextLocation = `/${splitMatcher.join('/')}`;
             navigator(nextLocation);
         },
     }), {});

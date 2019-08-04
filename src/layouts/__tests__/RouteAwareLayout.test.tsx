@@ -153,12 +153,12 @@ describe('<RouteAwareLayout />', () => {
         expect(spy).toHaveBeenCalledTimes(1);
     });
 
-    it('should trigger navigation handler with the layout2 endpoint with arguments interpolated', () => {
+    it('should trigger navigation handler with the layout1 endpoint with arguments interpolated', () => {
         const spy = jest.fn();
         const wrapper = mount(
             <RouteAwareLayout
                 {...defaultProps}
-                currentEndpoint="/layout2/T/N"
+                currentEndpoint="/layout2/T/cat/N"
                 defaultActiveKey="layout2"
                 layouts={[
                     {
@@ -169,7 +169,7 @@ describe('<RouteAwareLayout />', () => {
                     },
                     {
                         layoutKey: 'layout2',
-                        matcher: '/layout2/:tag/:number',
+                        matcher: '/layout2/:tag/cat/:number',
                         View: View2,
                         title: 'Two',
                     },
