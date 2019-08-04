@@ -9,7 +9,7 @@ import RouteAwareLayout, {
     TabContainerComponent,
 } from '../RouteAwareLayout';
 
-const TabsComponent: TabContainerComponent = ({ navigators, layouts, onChange, activeKey, ...rest }) => {
+const TabsComponent: TabContainerComponent<{ tag: string; number: number }> = ({ navigators, layouts, onChange, activeKey, ...rest }) => {
     return (
         <div>
             <AppBar>
@@ -30,7 +30,8 @@ const TabsComponent: TabContainerComponent = ({ navigators, layouts, onChange, a
             </AppBar>
             {layouts.map(({ View }: LayoutProps<{}>) => (
                 <View
-                    {...navigators}
+                    navigators={navigators}
+                    {...rest}
                 />
             ))}
         </div>
@@ -56,12 +57,14 @@ describe('<RouteAwareLayout />', () => {
     type ViewTwoProps = {
         number: number;
         tag: string;
-        layout2: (params: { number: number }) => void;
-        layout1: (params: { tag: string }) => void;
+        navigators: {
+            layout2: (params: { tag: string; number: number }) => void;
+            layout1: (params: { tag: string; number: number }) => void;
+        };
     };
     const View2: React.FC<ViewTwoProps> = props => (
         <div>
-            <button onClick={() => props.layout1(props)}>
+            <button onClick={() => props.navigators.layout1(props)}>
                 Submit
             </button>
             This is layout2 {props.number}
@@ -207,6 +210,42 @@ describe('<RouteAwareLayout />', () => {
 
         const selectedTab = wrapper.find('button[aria-selected=false]');
         selectedTab.simulate('click');
+
+        setTimeout(() => {
+            wrapper.update();
+            const newSelectedTab = wrapper.find('button[aria-selected=true]');
+            expect(newSelectedTab.text()).toEqual('One');
+            done();
+        }, 10);
+    });
+
+    it('should change the focus to tab 1 when clicking Submit button in tab 2', done => {
+        const wrapper = mount(
+            <RouteAwareLayout
+                {...defaultProps}
+                currentEndpoint="/layout2/T/N"
+                defaultActiveKey="layout2"
+                layouts={[
+                    {
+                        layoutKey: 'layout1',
+                        matcher: '/layout1/:tag/cat:number',
+                        View: View1,
+                        title: <>One</>,
+                    },
+                    {
+                        layoutKey: 'layout2',
+                        matcher: '/layout2/:tag/:number',
+                        View: View2,
+                        title: 'Two',
+                    },
+                ] as LayoutProps<ViewOneProps & ViewTwoProps>[]}
+            />
+        );
+
+        const submitButton = wrapper.findWhere((node: any) =>
+            node.exists() && node.is('button') && node.text() === 'Submit'
+        );
+        submitButton.simulate('click');
 
         setTimeout(() => {
             wrapper.update();

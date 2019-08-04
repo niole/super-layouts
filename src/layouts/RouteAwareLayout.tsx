@@ -30,46 +30,31 @@ function getRouteParams<RouteParams>(matcher: string, endpoint: string): RoutePa
     }), {}) as RouteParams;
 }
 
-type NavigatorHandlers = { [navigatorName: string]: (routeParams: {}) => void };
-
-function getLayoutNavigators(layoutProps: LayoutProps<{ [key: string]: any }>[], navigator: Navigator): NavigatorHandlers {
-    return layoutProps.reduce((handlers: NavigatorHandlers, { layoutKey, matcher}: LayoutProps<{}>) => ({
-        ...handlers,
-        [layoutKey]: (currentRouteParams: { [key: string]: any }) => {
-            const indexedParamNames = findParamsNames(matcher);
-            const splitMatcher = splitEndpoint(matcher);
-
-            indexedParamNames.forEach((params: IndexedParam) => {
-                splitMatcher[params.index] = currentRouteParams[params.key];
-            });
-
-            const nextLocation = `/${splitMatcher.join('/')}`;
-            navigator(nextLocation);
-        },
-    }), {});
-}
+type NavigatorHandlers = {
+    [layoutKey: string]: (routeParams: { [key: string]: any }) => void;
+};
 
 export type Navigator = (url: string) => void;
 
 export interface LayoutProps<RouteParams> {
     layoutKey: string;
     matcher: string;
-    View: GeneralComponent<RouteParams & NavigatorHandlers>;
+    View: GeneralComponent<RouteParams & { navigators: NavigatorHandlers }>;
     title: React.ReactNode;
 }
 
-export interface TabContainerProps {
+export type TabContainerProps<RouteParams> = RouteParams & {
     onChange: (layoutKey: string) => void;
     activeKey: string;
     layouts: LayoutProps<{}>[];
-    navigators: { [layoutKey: string]: (routeParams: { [key: string]: any }) => void }
+    navigators: NavigatorHandlers;
 }
 
-export type TabContainerComponent = GeneralComponent<TabContainerProps>;
+export type TabContainerComponent<RouteParams> = GeneralComponent<TabContainerProps<RouteParams>>;
 
 export type Props<RouteParams, RouterMetadata extends object> = RouterMetadata & {
     layouts: LayoutProps<{}>[];
-    TabContainer: TabContainerComponent;
+    TabContainer: TabContainerComponent<RouteParams>;
     navigator: Navigator;
     getEndpoint: (props: Props<RouteParams, RouterMetadata>) => string;
     defaultActiveKey: string;
@@ -103,6 +88,27 @@ class RouteAwareLayout<RouteParams, RouterMetadata extends {}> extends React.Pur
         }
     }
 
+    getLayoutNavigators = (
+        layoutProps: LayoutProps<{ [key: string]: any }>[],
+        navigator: Navigator
+    ): NavigatorHandlers => {
+        return layoutProps.reduce((handlers: NavigatorHandlers, { layoutKey, matcher}: LayoutProps<{}>) => ({
+            ...handlers,
+            [layoutKey]: (currentRouteParams: { [key: string]: any }) => {
+                const indexedParamNames = findParamsNames(matcher);
+                const splitMatcher = splitEndpoint(matcher);
+
+                indexedParamNames.forEach((params: IndexedParam) => {
+                    splitMatcher[params.index] = currentRouteParams[params.key];
+                });
+
+                const nextLocation = `/${splitMatcher.join('/')}`;
+                navigator(nextLocation);
+                this.setState({ focusedKey: layoutKey });
+            },
+        }), {});
+    }
+
     render() {
         const {
             defaultActiveKey,
@@ -114,8 +120,8 @@ class RouteAwareLayout<RouteParams, RouterMetadata extends {}> extends React.Pur
         } = this.props;
         const { focusedKey } = this.state;
         const currentLocation = getEndpoint(this.props);
-        const layoutNavigators = getLayoutNavigators(layouts, navigator)
-        const Container = TabContainer as React.FC<TabContainerProps>;
+        const layoutNavigators = this.getLayoutNavigators(layouts, navigator)
+        const Container = TabContainer as React.FC<TabContainerProps<RouteParams>>;
         const layout = layouts.find((layout: LayoutProps<{}>) => layout.layoutKey === focusedKey);
 
         return (
