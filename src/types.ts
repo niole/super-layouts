@@ -13,7 +13,7 @@ export interface ButtonProps {
 export type ButtonComponent = GeneralComponent<ButtonProps>;
 
 export interface TextProps {
-    children: string;
+    children?: React.ReactNode;
 }
 
 export type TextComponent = GeneralComponent<TextProps>;
@@ -25,7 +25,7 @@ export interface ContainerProps {
 export type ContainerComponent = GeneralComponent<ContainerProps>;
 
 export interface ActionBarProps {
-    children: GeneralComponent<ButtonProps>[];
+    children?: React.ReactNode;
 }
 
 export type ActionBarComponent = GeneralComponent<ActionBarProps>
@@ -51,7 +51,7 @@ export interface DialogContentComponentProps {
 export type DialogContentComponent = GeneralComponent<DialogContentComponentProps>;
 
 export interface DialogActionsComponentProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 export type DialogActionsComponent = GeneralComponent<DialogActionsComponentProps>;

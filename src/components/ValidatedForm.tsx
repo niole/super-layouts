@@ -140,35 +140,36 @@ class ValidatedForm<V extends { [key: string]: any }> extends React.PureComponen
         return (
             <View>
                 {inputs.map((inputRow: ValidatedInput<any, any, any, V>[]) => (
-                    <View key={inputRow[0].key}>
-                        {inputRow.map(({ key, Input, validator }: ValidatedInput<any, any, any, V>) => (
-                            <View key={key}>
-                                <Input
-                                    values={values}
-                                    onChange={this.handleInputChange(key, validator)}
-                                    value={values[key]}
-                                    error={errors[key]}
-                                />
-                                <Error Text={Text} message={errors[key]} />
-                            </View>
-                        ))}
-                    </View>
+                    inputRow.length ? (
+                        <View key={inputRow[0].key}>
+                            {inputRow.map(({ key, Input, validator }: ValidatedInput<any, any, any, V>) => (
+                                <View key={key}>
+                                    <Input
+                                        values={values}
+                                        onChange={this.handleInputChange(key, validator)}
+                                        value={values[key]}
+                                        error={errors[key]}
+                                    />
+                                    <Error Text={Text} message={errors[key]} />
+                                </View>
+                            ))}
+                        </View>
+                    ) : null
                 ))}
                 <ActionsContainer>
                     <View>
                         <Error Text={Text} message={submitError} />
                         <ActionBar>
-                            {props => <CancelButton onClick={onCancel} {...props} key="cancel">
+                            <CancelButton onClick={onCancel} key="cancel">
                                 Cancel
-                            </CancelButton>}
-                            {props => <SubmitButton
+                            </CancelButton>
+                            <SubmitButton
                                 key="submit"
                                 disabled={disableSubmit}
                                 onClick={this.onSubmit}
-                                {...props}
                             >
                                 Submit
-                            </SubmitButton>}
+                            </SubmitButton>
                         </ActionBar>
                     </View>
                 </ActionsContainer>
