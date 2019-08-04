@@ -26,7 +26,7 @@ function getRouteParams<RouteParams>(matcher: string, endpoint: string): RoutePa
     const splitUrl = splitEndpoint(endpoint);
     return params.reduce((acc: {}, next: IndexedParam, index: number) => ({
         ...acc,
-        [next.key]: splitUrl[index],
+        [next.key]: splitUrl[next.index],
     }), {}) as RouteParams;
 }
 
@@ -37,10 +37,10 @@ function getLayoutNavigators(layoutProps: LayoutProps<{ [key: string]: any }>[],
         ...handlers,
         [layoutKey]: (currentRouteParams: { [key: string]: any }) => {
             const indexedParamNames = findParamsNames(matcher);
-            const nextLocation = splitEndpoint(matcher).map((subUrl: string, index: number) => {
+            const nextLocation = '/' + splitEndpoint(matcher).map((subUrl: string, index: number) => {
                 const found = indexedParamNames.find((indexed: IndexedParam) => indexed.index === index);
                 return found ? currentRouteParams[found.key] : subUrl;
-            }).join('/')
+            }).join('/');
             navigator(nextLocation);
         },
     }), {});
@@ -87,7 +87,13 @@ class RouteAwareLayout<RouteParams, RouterMetadata extends {}> extends React.Pur
     handleOnChange =  (layoutNavigators: NavigatorHandlers) => (layoutKey: string): void => {
         const layoutNavigator = layoutNavigators[layoutKey];
         if (layoutNavigator) {
-            layoutNavigator(this.props);
+            const { focusedKey } = this.state;
+            const { layouts, getEndpoint } = this.props;
+            const currentLocation = getEndpoint(this.props);
+            const layout = layouts.find((layout: LayoutProps<{}>) => layout.layoutKey === focusedKey);
+
+            const routeParams = getRouteParams(layout ? layout.matcher : '', currentLocation);
+            layoutNavigator(routeParams);
         } else {
             console.warn(`Could not find handler for layout with key ${layoutKey}`);
         }

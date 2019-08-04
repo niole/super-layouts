@@ -9,7 +9,7 @@ import RouteAwareLayout, {
     TabContainerComponent,
 } from '../RouteAwareLayout';
 
-const TabsComponent: TabContainerComponent = ({ navigators, layouts, onChange, activeKey }) => {
+const TabsComponent: TabContainerComponent = ({ navigators, layouts, onChange, activeKey, ...rest }) => {
     return (
         <div>
             <AppBar>
@@ -43,7 +43,7 @@ describe('<RouteAwareLayout />', () => {
         TabContainer: TabsComponent,
         navigator: (url: string) => console.log(url),
         getEndpoint: (props: Props<{}, { currentEndpoint: string }>) => props.currentEndpoint,
-        currentEndpoint: 'layout1',
+        currentEndpoint: '/layout1/T/N',
         defaultActiveKey: 'layout1',
     };
 
@@ -151,5 +151,34 @@ describe('<RouteAwareLayout />', () => {
         selectedTab.simulate('click');
 
         expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should trigger navigation handler with the layout2 endpoint with arguments interpolated', () => {
+        const spy = jest.fn();
+        const wrapper = mount(
+            <RouteAwareLayout
+                {...defaultProps}
+                currentEndpoint="/layout2/T/N"
+                defaultActiveKey="layout2"
+                layouts={[
+                    {
+                        layoutKey: 'layout1',
+                        matcher: '/layout1/:tag/:number',
+                        View: View1,
+                        title: <>One</>,
+                    },
+                    {
+                        layoutKey: 'layout2',
+                        matcher: '/layout2/:tag/:number',
+                        View: View2,
+                        title: 'Two',
+                    },
+                ] as LayoutProps<ViewOneProps & ViewTwoProps>[]}
+                navigator={spy}
+            />
+        );
+        const selectedTab = wrapper.find('button[aria-selected=false]');
+        selectedTab.simulate('click');
+        expect(spy.mock.calls[0][0]).toEqual('/layout1/T/N');
     });
 });
