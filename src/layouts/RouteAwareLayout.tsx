@@ -54,37 +54,34 @@ export interface LayoutProps<RouteParams> {
     title: React.ReactNode;
 }
 
-export interface TabComponentProps<RouteParams> {
-    tabKey: string;
-    children: React.ReactNode;
-    title: React.ReactNode;
-    onClick?: (params: RouteParams) => void;
-}
-
 export interface TabContainerProps {
-    children?: React.ReactNode;
-    onChange?: (key: string) => void;
-    activeKey?: string;
+    onChange: (layoutKey: string) => void;
+    activeKey: string;
+    layouts: LayoutProps<{}>[];
+    navigators: { [layoutKey: string]: (routeParams: { [key: string]: any }) => void }
 }
 
 export type TabContainerComponent = GeneralComponent<TabContainerProps>;
 
 export type Props<RouteParams, RouterMetadata extends object> = RouterMetadata & {
-    children: LayoutProps<{}>[];
-    TabComponent: GeneralComponent<TabComponentProps<RouteParams>>;
+    layouts: LayoutProps<{}>[];
     TabContainer: TabContainerComponent;
     navigator: Navigator;
     getEndpoint: (props: Props<RouteParams, RouterMetadata>) => string;
-} & DefaultProps;
-
-export type DefaultProps = {
-    defaultActiveKey?: string;
+    defaultActiveKey: string;
 };
 
-class RouteAwareLayout<RouteParams, RouterMetadata extends {}> extends React.PureComponent<Props<RouteParams, RouterMetadata>> {
-    static defaultProps: DefaultProps = {
-        defaultActiveKey: undefined,
-    };
+export interface State {
+    focusedKey: string;
+}
+
+class RouteAwareLayout<RouteParams, RouterMetadata extends {}> extends React.PureComponent<Props<RouteParams, RouterMetadata>, State> {
+    constructor(props: Props<RouteParams, RouterMetadata>) {
+        super(props);
+        this.state = {
+            focusedKey: props.defaultActiveKey,
+        };
+    }
 
     handleOnChange =  (layoutNavigators: NavigatorHandlers) => (layoutKey: string): void => {
         const layoutNavigator = layoutNavigators[layoutKey];
@@ -100,34 +97,24 @@ class RouteAwareLayout<RouteParams, RouterMetadata extends {}> extends React.Pur
             defaultActiveKey,
             children,
             TabContainer,
-            TabComponent,
+            layouts,
             getEndpoint,
             navigator,
         } = this.props;
+        const { focusedKey } = this.state;
         const currentLocation = getEndpoint(this.props);
-        const layoutNavigators = getLayoutNavigators(children, navigator)
+        const layoutNavigators = getLayoutNavigators(layouts, navigator)
         const Container = TabContainer as React.FC<TabContainerProps>;
-        const Tab = TabComponent as React.FC<TabComponentProps<RouteParams>>;
+        const layout = layouts.find((layout: LayoutProps<{}>) => layout.layoutKey === focusedKey);
 
         return (
             <Container
                 activeKey={defaultActiveKey}
                 onChange={this.handleOnChange(layoutNavigators)}
-            >
-                {children.map(({ matcher, View, title, layoutKey }: LayoutProps<RouteParams>) => (
-                    <Tab
-                        tabKey={layoutKey}
-                        key={layoutKey}
-                        title={title}
-                        onClick={layoutNavigators[layoutKey]}
-                    >
-                        <View
-                            {...getRouteParams(matcher, currentLocation)}
-                            {...layoutNavigators}
-                        />
-                    </Tab>
-                ))}
-            </Container>
+                layouts={layouts}
+                {...getRouteParams(layout ? layout.matcher : '', currentLocation)}
+                navigators={layoutNavigators}
+            />
         );
     }
 }
