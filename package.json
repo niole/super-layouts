@@ -23,6 +23,7 @@
     "@types/react": "16.8.23",
     "@types/react-dom": "^16.8.5",
     "ramda": "^0.26.1",
+    "@types/ramda": "^0.26.18",
     "typescript": "3.5.3",
     "with-data-fetcher": "^1.1.2"
   },
@@ -31,7 +32,6 @@
     "@types/enzyme": "^3.10.3",
     "@types/enzyme-adapter-react-16": "^1.0.5",
     "@types/jest": "^24.0.15",
-    "@types/ramda": "^0.26.18",
     "antd": "^3.20.7",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",

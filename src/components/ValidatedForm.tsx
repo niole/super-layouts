@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as R from 'ramda';
 import {
     GeneralComponent,
     DialogActionsComponent,
@@ -89,7 +90,7 @@ class ValidatedForm<V extends { [key: string]: any }> extends React.PureComponen
             [key]: validator ? validator(values[key]) : undefined,
         }), {});
 
-        const disableSubmit = !!Object.values(newErrors).find((error: any) => !!error);
+        const disableSubmit = !!R.values(newErrors).find((error: any) => !!error);
 
         this.setState({ errors: newErrors, disableSubmit, submitError: undefined});
 
@@ -111,7 +112,7 @@ class ValidatedForm<V extends { [key: string]: any }> extends React.PureComponen
                 });
             } else {
                 const newErrors: { [key: string]: undefined | string } = { ...errors, [key]: undefined };
-                const disableSubmit = !!Object.values(newErrors).find((error: any) => !!error);
+                const disableSubmit = !!R.values(newErrors).find((error: any) => !!error);
                 this.setState({
                     errors: newErrors,
                     disableSubmit,
