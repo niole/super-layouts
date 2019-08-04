@@ -34,6 +34,7 @@ type NavigatorHandlers = { [navigatorName: string]: (routeParams: {}) => void };
 
 function getLayoutNavigators(layoutProps: LayoutProps<{ [key: string]: any }>[], navigator: Navigator): NavigatorHandlers {
     return layoutProps.reduce((handlers: NavigatorHandlers, { layoutKey, matcher}: LayoutProps<{}>) => ({
+        ...handlers,
         [layoutKey]: (currentRouteParams: { [key: string]: any }) => {
             const indexedParamNames = findParamsNames(matcher);
             const nextLocation = splitEndpoint(matcher).map((subUrl: string, index: number) => {

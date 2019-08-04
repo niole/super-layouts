@@ -123,4 +123,36 @@ describe('<RouteAwareLayout />', () => {
             done();
         }, 50);
     });
+
+    it('should trigger the navigation handler when clicking on layout1\'s tab', done => {
+        const spy = jest.fn();
+        const wrapper = mount(
+            <RouteAwareLayout
+                {...defaultProps}
+                defaultActiveKey="layout2"
+                layouts={[
+                    {
+                        layoutKey: 'layout1',
+                        matcher: '/layout1/:tag/:number',
+                        View: View1,
+                        title: <>One</>,
+                    },
+                    {
+                        layoutKey: 'layout2',
+                        matcher: '/layout2/:tag/:number',
+                        View: View2,
+                        title: 'Two',
+                    },
+                ] as LayoutProps<ViewOneProps & ViewTwoProps>[]}
+                navigator={spy}
+            />
+        );
+        const selectedTab = wrapper.find('button[aria-selected=false]');
+        selectedTab.simulate('click');
+
+        setTimeout(() => {
+            expect(spy).toHaveBeenCalledTimes(1);
+            done();
+        }, 50);
+    });
 });
