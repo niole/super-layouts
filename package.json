@@ -7,7 +7,7 @@
     "dist"
   ],
   "scripts": {
-    "publish": "npm i && npm test && npm pack && npm publish super-layouts-$NEW_VERSION.tgz",
+    "publish": "rm -rf node_modules && npm i && npm test && npm run build && npm pack && npm publish super-layouts-$NEW_VERSION.tgz",
     "test": "jest",
     "test-dev": "jest --watch",
     "build": "rm -rf dist/* && tsc",
