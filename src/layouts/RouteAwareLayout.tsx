@@ -30,11 +30,15 @@ function getRouteParams<RouteParams>(matcher: string, endpoint: string): RoutePa
     }), {}) as RouteParams;
 }
 
-type NavigatorHandlers = {
-    [layoutKey: string]: (routeParams: { [key: string]: any }) => void;
+type RouteParamMap = {
+    [key: string]: any;
 };
 
-export type Navigator = (url: string) => void;
+type NavigatorHandlers = {
+    [layoutKey: string]: (routeParams: RouteParamMap) => void;
+};
+
+export type Navigator = (url: string, splitMatcher: string[], routeParams: RouteParamMap) => void;
 
 export interface LayoutProps<RouteParams> {
     layoutKey: string;
@@ -103,7 +107,7 @@ class RouteAwareLayout<RouteParams, RouterMetadata extends {}> extends React.Pur
                 });
 
                 const nextLocation = `/${splitMatcher.join('/')}`;
-                navigator(nextLocation);
+                navigator(nextLocation, splitEndpoint(matcher), indexedParamNames);
                 this.setState({ focusedKey: layoutKey });
             },
         }), {});
