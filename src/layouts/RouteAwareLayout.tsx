@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { GeneralComponent } from '../types';
 
-const GET_PARAMS_MATCHER = /:([a-zA-Z][\w-]*)/;
-
 export interface IndexedParam {
     index: number;
     key: string;
@@ -13,9 +11,9 @@ const splitEndpoint = (endpoint: string): string[] => endpoint.split('/').filter
 const findParamsNames = (matcher: string): IndexedParam[] => {
     const splitMatcher = splitEndpoint(matcher);
     return splitMatcher.reduce((all: IndexedParam[], level: string, index: number) => {
-        const foundParam = level.match(GET_PARAMS_MATCHER);
-        if (foundParam) {
-            all.push({ index, key: foundParam[1] });
+        const isMatch = level.startsWith(':');
+        if (isMatch) {
+            all.push({ index, key: level.slice(1) });
         }
         return all;
     }, []);
