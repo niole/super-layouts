@@ -30,7 +30,7 @@ export type ValidatedInput<A, C, V, Values> = {
     Input: PluggableInput<C, V, Values>;
 };
 
-type Props<V> = {
+export type Props<V> = {
     ActionsContainer: DialogActionsComponent;
     inputs: ValidatedInput<any, any, any, V>[][];
     onSubmit: (values: V) => Promise<void>;
@@ -39,12 +39,14 @@ type Props<V> = {
     Text: TextComponent;
     View: ContainerComponent;
     ActionBar: ActionBarComponent;
+    submitLabel?: React.ReactNode;
+    cancelLabel?: React.ReactNode;
     hideCancel?: boolean;
     onCancel?: () => void;
     CancelButton?: ButtonComponent;
 };
 
-type Errors =  { [key: string]: string | undefined };
+export type Errors =  { [key: string]: string | undefined };
 
 type State<V> = {
     values: V
@@ -138,6 +140,8 @@ class ValidatedForm<V extends { [key: string]: any }> extends React.PureComponen
             inputs,
             onCancel,
             hideCancel,
+            submitLabel = 'Submit',
+            cancelLabel = 'Cancel',
         } = this.props;
         const { submitError, disableSubmit, errors, values } = this.state;
         return (
@@ -165,7 +169,7 @@ class ValidatedForm<V extends { [key: string]: any }> extends React.PureComponen
                         <ActionBar>
                             {!hideCancel && CancelButton && (
                                 <CancelButton onClick={onCancel} key="cancel">
-                                    Cancel
+                                    {cancelLabel}
                                 </CancelButton>
                             )}
                             <SubmitButton
@@ -173,7 +177,7 @@ class ValidatedForm<V extends { [key: string]: any }> extends React.PureComponen
                                 disabled={disableSubmit}
                                 onClick={this.onSubmit}
                             >
-                                Submit
+                                {submitLabel}
                             </SubmitButton>
                         </ActionBar>
                     </View>
