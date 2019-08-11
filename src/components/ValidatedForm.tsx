@@ -34,13 +34,14 @@ type Props<V> = {
     ActionsContainer: DialogActionsComponent;
     inputs: ValidatedInput<any, any, any, V>[][];
     onSubmit: (values: V) => Promise<void>;
-    onCancel: () => void;
     SubmitButton: ButtonComponent;
-    CancelButton: ButtonComponent;
     defaultValues: V;
     Text: TextComponent;
     View: ContainerComponent;
     ActionBar: ActionBarComponent;
+    hideCancel?: boolean;
+    onCancel?: () => void;
+    CancelButton?: ButtonComponent;
 };
 
 type Errors =  { [key: string]: string | undefined };
@@ -136,6 +137,7 @@ class ValidatedForm<V extends { [key: string]: any }> extends React.PureComponen
             ActionsContainer = View,
             inputs,
             onCancel,
+            hideCancel,
         } = this.props;
         const { submitError, disableSubmit, errors, values } = this.state;
         return (
@@ -161,9 +163,11 @@ class ValidatedForm<V extends { [key: string]: any }> extends React.PureComponen
                     <View>
                         <Error Text={Text} message={submitError} />
                         <ActionBar>
-                            <CancelButton onClick={onCancel} key="cancel">
-                                Cancel
-                            </CancelButton>
+                            {!hideCancel && CancelButton && (
+                                <CancelButton onClick={onCancel} key="cancel">
+                                    Cancel
+                                </CancelButton>
+                            )}
                             <SubmitButton
                                 key="submit"
                                 disabled={disableSubmit}
