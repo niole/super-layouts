@@ -35,7 +35,7 @@ export type Props<V> = {
     inputs: ValidatedInput<any, any, any, V>[][];
     onSubmit: (values: V) => Promise<void>;
     SubmitButton: ButtonComponent;
-    defaultValues: V;
+    defaultValues?: V;
     Text: TextComponent;
     View: ContainerComponent;
     ActionBar: ActionBarComponent;
@@ -56,6 +56,10 @@ type State<V> = {
 };
 
 class ValidatedForm<V extends { [key: string]: any }> extends React.PureComponent<Props<V>, State<V>> {
+    static defaultProps = {
+        defaultValues: {},
+    };
+
     constructor(props: Props<V>) {
         super(props);
         this.state = {
@@ -129,6 +133,20 @@ class ValidatedForm<V extends { [key: string]: any }> extends React.PureComponen
         }
     }
 
+    handleCancel = () => {
+        const { onCancel, defaultValues } = this.props;
+        this.setState({
+            values: defaultValues,
+            errors: {},
+            disableSubmit: false,
+            submitError: undefined
+        }, () => {
+            if (onCancel) {
+                onCancel();
+            }
+        });
+    }
+
     render() {
         const {
             Text,
@@ -168,7 +186,7 @@ class ValidatedForm<V extends { [key: string]: any }> extends React.PureComponen
                         <Error Text={Text} message={submitError} />
                         <ActionBar>
                             {!hideCancel && CancelButton && (
-                                <CancelButton onClick={onCancel} key="cancel">
+                                <CancelButton onClick={this.handleCancel} key="cancel">
                                     {cancelLabel}
                                 </CancelButton>
                             )}
